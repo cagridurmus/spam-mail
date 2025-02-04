@@ -16,41 +16,49 @@
         </div>
     }
 
-    <form asp-action="Submit" method="post" id="contactForm">
-        <input type="hidden" id="recaptchaToken" name="RecaptchaToken" />
-        
-        <div class="form-group">
-            <label asp-for="Name">Ad</label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
-        </div>
+    <div class="row">
+        <div class="col-md-6">
+            <form id="contactForm" method="post">
+                <input type="hidden" id="recaptchaToken" name="RecaptchaToken" />
+                
+                <div class="form-group">
+                    <label asp-for="Name">Ad</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
 
-        <div class="form-group">
-            <label asp-for="Surname">Soyad</label>
-            <input asp-for="Surname" class="form-control" />
-            <span asp-validation-for="Surname" class="text-danger"></span>
-        </div>
+                <div class="form-group">
+                    <label asp-for="Surname">Soyad</label>
+                    <input asp-for="Surname" class="form-control" />
+                    <span asp-validation-for="Surname" class="text-danger"></span>
+                </div>
 
-        <div class="form-group">
-            <label asp-for="Email">E-posta</label>
-            <input asp-for="Email" class="form-control" type="email" />
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
+                <div class="form-group">
+                    <label asp-for="Email">E-posta</label>
+                    <input asp-for="Email" class="form-control" type="email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
 
-        <div class="form-group">
-            <label asp-for="Phone">Telefon</label>
-            <input asp-for="Phone" class="form-control" />
-            <span asp-validation-for="Phone" class="text-danger"></span>
-        </div>
+                <div class="form-group">
+                    <label asp-for="Phone">Telefon</label>
+                    <input asp-for="Phone" class="form-control" />
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
 
-        <div class="form-group">
-            <label asp-for="Message">Mesaj</label>
-            <textarea asp-for="Message" class="form-control" rows="5"></textarea>
-            <span asp-validation-for="Message" class="text-danger"></span>
-        </div>
+                <div class="form-group">
+                    <label asp-for="Message">Mesaj</label>
+                    <textarea asp-for="Message" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Message" class="text-danger"></span>
+                </div>
 
-        <button type="submit" class="btn btn-primary mt-3">Gönder</button>
-    </form>
+                <div class="form-group mb-3">
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAAA7iXD_bccIVwYWS"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Gönder</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
@@ -65,5 +73,44 @@
                     });
             });
         });
+    </script>
+
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+    <script>
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const formData = {
+            name: document.getElementById('Name').value,
+            surname: document.getElementById('Surname').value,
+            email: document.getElementById('Email').value,
+            phone: document.getElementById('Phone').value,
+            message: document.getElementById('Message').value
+        };
+
+        try {
+            const response = await fetch('/Contact/SendMessageV2', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert(result.message);
+                this.reset();
+                turnstile.reset(); // CAPTCHA'yı sıfırla
+            } else {
+                const error = await response.text();
+                alert('Hata: ' + error);
+            }
+        } catch (error) {
+            alert('Bir hata oluştu: ' + error);
+        }
+    });
     </script>
 }

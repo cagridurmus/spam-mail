@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SpamMail")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+086163146da89fd8d4847e5a37da51443624fdbb")]
 [assembly: System.Reflection.AssemblyProductAttribute("SpamMail")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SpamMail")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

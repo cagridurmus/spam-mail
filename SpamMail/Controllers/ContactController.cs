@@ -2,14 +2,17 @@ using System.Net.Mail;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
 
 public class ContactController : Controller
 {
     private readonly IConfiguration _configuration;
+    private readonly IHttpClientFactory _httpClientFactory;
 
-    public ContactController(IConfiguration configuration)
+    public ContactController(IConfiguration configuration, IHttpClientFactory httpClientFactory)
     {
         _configuration = configuration;
+        _httpClientFactory = httpClientFactory;
     }
 
     public IActionResult Index()
@@ -18,71 +21,90 @@ public class ContactController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Submit(ContactModel model)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SendMessageV2([FromBody] ContactModel model)
     {
-        //if (!ModelState.IsValid)
-        //{
-        //    return View("Index", model);
-        //}
-
-        // reCAPTCHA doğrulama
-        var recaptchaSuccess = await VerifyRecaptcha(model.RecaptchaToken);
-        if (!recaptchaSuccess)
-        {
-            ModelState.AddModelError("", "Güvenlik doğrulaması başarısız oldu. Lütfen tekrar deneyin.");
-            return View("Index", model);
-        }
-
-        // E-posta gönderme
         try
         {
-            using (var client = new SmtpClient("smtp.gmail.com", 587))
+            if (!ModelState.IsValid)
             {
-                client.EnableSsl = true;
-                client.Credentials = new NetworkCredential(
-                    _configuration["EmailSettings:Email"],
-                    _configuration["EmailSettings:Password"]
-                );
-
-                var mailMessage = new MailMessage
-                {
-                    From = new MailAddress(_configuration["EmailSettings:Email"]),
-                    Subject = "Yeni İletişim Formu Mesajı",
-                    Body = $"Ad: {model.Name}\n" +
-                           $"Soyad: {model.Surname}\n" +
-                           $"E-posta: {model.Email}\n" +
-                           $"Telefon: {model.Phone}\n" +
-                           $"Mesaj: {model.Message}",
-                    IsBodyHtml = false
-                };
-                mailMessage.To.Add("cagri363@gmail.com");
-
-                await client.SendMailAsync(mailMessage);
+                return BadRequest(ModelState);
             }
 
-            TempData["Success"] = "Mesajınız başarıyla gönderildi.";
-            return RedirectToAction("Index");
+            // Turnstile doğrulaması
+            var token = Request.Form["cf-turnstile-response"].ToString();
+            var isValid = await ValidateTurnstileToken(token);
+
+            if (!isValid)
+            {
+                return BadRequest("Turnstile doğrulaması başarısız oldu.");
+            }
+
+            // E-posta gönderme
+            try
+            {
+                using (var client = new SmtpClient("smtp.gmail.com", 587))
+                {
+                    client.EnableSsl = true;
+                    client.Credentials = new NetworkCredential(
+                        _configuration["EmailSettings:Email"],
+                        _configuration["EmailSettings:Password"]
+                    );
+
+                    var mailMessage = new MailMessage
+                    {
+                        From = new MailAddress(_configuration["EmailSettings:Email"]),
+                        Subject = "Yeni İletişim Formu Mesajı",
+                        Body = $"Ad: {model.Name}\n" +
+                               $"Soyad: {model.Surname}\n" +
+                               $"E-posta: {model.Email}\n" +
+                               $"Telefon: {model.Phone}\n" +
+                               $"Mesaj: {model.Message}",
+                        IsBodyHtml = false
+                    };
+                    mailMessage.To.Add("cagri363@gmail.com");
+
+                    await client.SendMailAsync(mailMessage);
+                }
+
+                return Ok(new { message = "Mesajınız başarıyla gönderildi." });
+            }
+            catch
+            {
+                ModelState.AddModelError("", "E-posta gönderilirken bir hata oluştu.");
+                return View("Index", model);
+            }
         }
-        catch
+        catch (Exception ex)
         {
-            ModelState.AddModelError("", "E-posta gönderilirken bir hata oluştu.");
-            return View("Index", model);
+            return StatusCode(500, "Bir hata oluştu: " + ex.Message);
         }
     }
 
-    private async Task<bool> VerifyRecaptcha(string token)
+    private async Task<bool> ValidateTurnstileToken(string token)
     {
-        using (var client = new HttpClient())
-        {
-            var response = await client.GetStringAsync(
-                $"https://www.google.com/recaptcha/api/siteverify?" +
-                $"secret={_configuration["RecaptchaSettings:SecretKey"]}&" +
-                $"response={token}"
-            );
+        var secret = _configuration["Turnstile:SecretKey"];
+        var client = _httpClientFactory.CreateClient();
 
-            var jsonResponse = JObject.Parse(response);
-            return jsonResponse.Value<bool>("success") && 
-                   jsonResponse.Value<double>("score") >= 0.5;
-        }
+        var values = new Dictionary<string, string>
+        {
+            { "secret", secret },
+            { "response", token }
+        };
+
+        var content = new FormUrlEncodedContent(values);
+        var response = await client.PostAsync("https://challenges.cloudflare.com/turnstile/v0/siteverify", content);
+        var result = await response.Content.ReadFromJsonAsync<TurnstileResponse>();
+
+        return result?.Success ?? false;
     }
+}
+
+public class TurnstileResponse
+{
+    [JsonPropertyName("success")]
+    public bool Success { get; set; }
+
+    [JsonPropertyName("error-codes")]
+    public string[] ErrorCodes { get; set; }
 }

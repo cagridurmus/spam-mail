@@ -61,11 +61,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\cagri.durmus\\source\\repos\\SpamMail\\SpamMail\\SpamMail.csproj",
+      "projectUniqueName": "C:\\Users\\cagri.durmus\\source\\repos\\SpamMail\\spam-mail\\SpamMail\\SpamMail.csproj",
       "projectName": "SpamMail",
-      "projectPath": "C:\\Users\\cagri.durmus\\source\\repos\\SpamMail\\SpamMail\\SpamMail.csproj",
+      "projectPath": "C:\\Users\\cagri.durmus\\source\\repos\\SpamMail\\spam-mail\\SpamMail\\SpamMail.csproj",
       "packagesPath": "C:\\Users\\cagri.durmus\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\cagri.durmus\\source\\repos\\SpamMail\\SpamMail\\obj\\",
+      "outputPath": "C:\\Users\\cagri.durmus\\source\\repos\\SpamMail\\spam-mail\\SpamMail\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
