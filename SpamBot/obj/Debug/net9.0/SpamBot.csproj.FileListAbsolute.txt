@@ -1,0 +1,17 @@
+C:\Users\cagri.durmus\source\repos\SpamMail\SpamBot\bin\Debug\net9.0\SpamBot.exe
+C:\Users\cagri.durmus\source\repos\SpamMail\SpamBot\bin\Debug\net9.0\SpamBot.deps.json
+C:\Users\cagri.durmus\source\repos\SpamMail\SpamBot\bin\Debug\net9.0\SpamBot.runtimeconfig.json
+C:\Users\cagri.durmus\source\repos\SpamMail\SpamBot\bin\Debug\net9.0\SpamBot.dll
+C:\Users\cagri.durmus\source\repos\SpamMail\SpamBot\bin\Debug\net9.0\SpamBot.pdb
+C:\Users\cagri.durmus\source\repos\SpamMail\SpamBot\bin\Debug\net9.0\Newtonsoft.Json.dll
+C:\Users\cagri.durmus\source\repos\SpamMail\SpamBot\obj\Debug\net9.0\SpamBot.csproj.AssemblyReference.cache
+C:\Users\cagri.durmus\source\repos\SpamMail\SpamBot\obj\Debug\net9.0\SpamBot.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\cagri.durmus\source\repos\SpamMail\SpamBot\obj\Debug\net9.0\SpamBot.AssemblyInfoInputs.cache
+C:\Users\cagri.durmus\source\repos\SpamMail\SpamBot\obj\Debug\net9.0\SpamBot.AssemblyInfo.cs
+C:\Users\cagri.durmus\source\repos\SpamMail\SpamBot\obj\Debug\net9.0\SpamBot.csproj.CoreCompileInputs.cache
+C:\Users\cagri.durmus\source\repos\SpamMail\SpamBot\obj\Debug\net9.0\SpamBot.csproj.Up2Date
+C:\Users\cagri.durmus\source\repos\SpamMail\SpamBot\obj\Debug\net9.0\SpamBot.dll
+C:\Users\cagri.durmus\source\repos\SpamMail\SpamBot\obj\Debug\net9.0\refint\SpamBot.dll
+C:\Users\cagri.durmus\source\repos\SpamMail\SpamBot\obj\Debug\net9.0\SpamBot.pdb
+C:\Users\cagri.durmus\source\repos\SpamMail\SpamBot\obj\Debug\net9.0\SpamBot.genruntimeconfig.cache
+C:\Users\cagri.durmus\source\repos\SpamMail\SpamBot\obj\Debug\net9.0\ref\SpamBot.dll

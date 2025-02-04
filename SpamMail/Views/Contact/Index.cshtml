@@ -1,0 +1,69 @@
+@model ContactModel
+
+@{
+    ViewData["Title"] = "İletişim";
+}
+
+<script src="https://www.google.com/recaptcha/api.js?render=6Lfx7swqAAAAAGSxkFCWwDud4xk8IUXyvPkf9HMp"></script>
+
+<div class="container mt-5">
+    <h2>İletişim Formu</h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
+    <form asp-action="Submit" method="post" id="contactForm">
+        <input type="hidden" id="recaptchaToken" name="RecaptchaToken" />
+        
+        <div class="form-group">
+            <label asp-for="Name">Ad</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Surname">Soyad</label>
+            <input asp-for="Surname" class="form-control" />
+            <span asp-validation-for="Surname" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Email">E-posta</label>
+            <input asp-for="Email" class="form-control" type="email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Phone">Telefon</label>
+            <input asp-for="Phone" class="form-control" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Message">Mesaj</label>
+            <textarea asp-for="Message" class="form-control" rows="5"></textarea>
+            <span asp-validation-for="Message" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Gönder</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        grecaptcha.ready(function() {
+            document.getElementById('contactForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                grecaptcha.execute('6Lfx7swqAAAAAGSxkFCWwDud4xk8IUXyvPkf9HMp', {action: 'submit'})
+                    .then(function(token) {
+                        document.getElementById('recaptchaToken').value = token;
+                        document.getElementById('contactForm').submit();
+                    });
+            });
+        });
+    </script>
+}
